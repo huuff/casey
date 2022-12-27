@@ -52,4 +52,13 @@ mod tests {
         assert_eq!(result, Case::CamelCase);
     }
 
+    #[test]
+    fn unable_to_detect_single_lowercase_word() {
+        let result = Case::detect("word");
+
+        assert!(result.is_ok());
+        let result = result.unwrap();
+        assert!(result.is_none());
+    }
+
 }

@@ -92,4 +92,18 @@ mod tests {
 
         assert!(!result);
     }
+
+    #[test]
+    fn detects_snake_case() {
+        let result = Case::SnakeCase.matcher().is_match("snake_case");
+
+        assert!(result);
+    }
+
+    #[test]
+    fn detects_not_snake_case() {
+        let result = Case::SnakeCase.matcher().is_match("snake-case");
+        
+        assert!(!result);
+    }
 }

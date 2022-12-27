@@ -1,5 +1,6 @@
 use crate::case::Case;
 use thiserror::Error;
+use regex::Regex;
 
 #[derive(Error, Debug)]
 pub enum DetectError<'a> {
@@ -18,6 +19,23 @@ impl CaseDetect for Case {
         }
 
         todo!("TODO: Normal flow of the function")
+    }
+}
+
+trait CaseMatcher {
+    fn matcher(&self) -> Regex;
+}
+
+impl CaseMatcher for Case {
+    fn matcher(&self) -> Regex {
+        // TODO All of this should be lazy with once_cell
+        match self {
+            Case::CamelCase => Regex::new(r"[a-z]([a-z]|[A-Z]*)").unwrap(),
+            Case::ShoutingSnakeCase => Regex::new(r"([A-Z]|_)*").unwrap(),
+            Case::PascalCase => Regex::new(r"[a-z]([a-z]|[A-Z]*)").unwrap(),
+            Case::SnakeCase => Regex::new(r"([a-z]_)*").unwrap(),
+            Case::KebabCase => Regex::new(r"([a-z]|-)*").unwrap(),
+        }
     }
 }
 

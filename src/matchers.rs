@@ -1,19 +1,19 @@
 use regex::Regex;
 use crate::case::Case;
+use once_cell_regex::regex;
 
 pub trait CaseMatcher {
-    fn matcher(&self) -> Regex;
+    fn matcher(&self) -> &Regex;
 }
 
 impl CaseMatcher for Case {
-    fn matcher(&self) -> Regex {
-        // TODO All of this should be lazy with once_cell
+    fn matcher(&self) -> &Regex {
         match self {
-            Case::CamelCase => Regex::new(r"^[a-z]([a-z]|[A-Z])*$").unwrap(),
-            Case::ShoutingSnakeCase => Regex::new(r"^([A-Z]|_)*$").unwrap(),
-            Case::PascalCase => Regex::new(r"^[A-Z]([a-z]|[A-Z])*$").unwrap(),
-            Case::SnakeCase => Regex::new(r"^([a-z]|_)*$").unwrap(),
-            Case::KebabCase => Regex::new(r"^([a-z]|-)*$").unwrap(),
+            Case::CamelCase => regex!(r"^[a-z]([a-z]|[A-Z])*$"),
+            Case::ShoutingSnakeCase => regex!(r"^([A-Z]|_)*$"),
+            Case::PascalCase => regex!(r"^[A-Z]([a-z]|[A-Z])*$"),
+            Case::SnakeCase => regex!(r"^([a-z]|_)*$"),
+            Case::KebabCase => regex!(r"^([a-z]|-)*$"),
         }
     }
 }

@@ -57,4 +57,25 @@ mod tests {
 
         assert!(result);
     }
+
+    #[test]
+    fn detects_not_camel_case() {
+        let result = Case::CamelCase.matcher().is_match("camel_case");
+
+        assert!(!result);
+    }
+
+    #[test]
+    fn detects_shouting_snake_case() {
+        let result = Case::ShoutingSnakeCase.matcher().is_match("SHOUTING_SNAKE");
+
+        assert!(result);
+    }
+
+    #[test]
+    fn detects_not_shouting_snake() {
+        let result = Case::ShoutingSnakeCase.matcher().is_match("shoutingSnake");
+
+        assert!(!result);
+    }
 }

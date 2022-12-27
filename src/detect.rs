@@ -30,11 +30,11 @@ impl CaseMatcher for Case {
     fn matcher(&self) -> Regex {
         // TODO All of this should be lazy with once_cell
         match self {
-            Case::CamelCase => Regex::new(r"[a-z]([a-z]|[A-Z]*)").unwrap(),
-            Case::ShoutingSnakeCase => Regex::new(r"([A-Z]|_)*").unwrap(),
-            Case::PascalCase => Regex::new(r"[a-z]([a-z]|[A-Z]*)").unwrap(),
-            Case::SnakeCase => Regex::new(r"([a-z]_)*").unwrap(),
-            Case::KebabCase => Regex::new(r"([a-z]|-)*").unwrap(),
+            Case::CamelCase => Regex::new(r"^[a-z]([a-z]|[A-Z])*$").unwrap(),
+            Case::ShoutingSnakeCase => Regex::new(r"^([A-Z]|_)*$").unwrap(),
+            Case::PascalCase => Regex::new(r"^[A-Z]([a-z]|[A-Z]*)$").unwrap(),
+            Case::SnakeCase => Regex::new(r"^([a-z]|_)*$").unwrap(),
+            Case::KebabCase => Regex::new(r"^([a-z]|-)*$").unwrap(),
         }
     }
 }
@@ -45,9 +45,16 @@ mod tests {
     
     #[test]
     fn errors_on_non_token_input() {
-        let result= Case::detect("not token");
+        let result = Case::detect("not token");
 
         assert!(result.is_err());
         assert_eq!(format!("{}", result.unwrap_err()), "input 'not token' is not a token");
+    }
+
+    #[test]
+    fn detects_camel_case() {
+        let result = Case::CamelCase.matcher().is_match("camelCase");
+
+        assert!(result);
     }
 }

@@ -1,6 +1,6 @@
 use strum_macros::EnumIter;
 
-#[derive(Debug, EnumIter)]
+#[derive(Debug, EnumIter, PartialEq, Eq)]
 pub enum Case {
     // Uppercase
     PascalCase,

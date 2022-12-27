@@ -41,4 +41,15 @@ mod tests {
         assert_eq!(format!("{}", result.unwrap_err()), "input 'not token' is not a token");
     }
 
+    #[test]
+    fn detects_camel_case() {
+        let result = Case::detect("camelCase");
+
+        assert!(result.is_ok());
+        let result = result.unwrap();
+        assert!(result.is_some());
+        let result = result.unwrap();
+        assert_eq!(result, Case::CamelCase);
+    }
+
 }

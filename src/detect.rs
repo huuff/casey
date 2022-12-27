@@ -1,5 +1,7 @@
 use crate::case::Case;
 use thiserror::Error;
+use strum::IntoEnumIterator;
+use crate::matchers::CaseMatcher;
 
 #[derive(Error, Debug)]
 pub enum DetectError<'a> {
@@ -17,7 +19,13 @@ impl CaseDetect for Case {
             return Err(DetectError::InvalidInputError(token));
         }
 
-        todo!("TODO: Normal flow of the function")
+        let mut matching_cases: Vec<Case> = Case::iter().filter(|c| c.matcher().is_match(token)).collect();
+
+        if matching_cases.len() == 1 {
+            return Ok(Some(matching_cases.remove(0)));
+        } else {
+            return Ok(None);
+        }
     }
 }
 

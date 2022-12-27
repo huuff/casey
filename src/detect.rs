@@ -3,19 +3,18 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum DetectError<'a> {
-   #[error("input '{0}' is not a word")]
+   #[error("input '{0}' is not a token")]
     InvalidInputError(&'a str)
 }
 
-// TOOD: Rename "word" to "token"
 trait CaseDetect {
-    fn detect(word: &str) -> Result<Option<Case>, DetectError>;
+    fn detect(token: &str) -> Result<Option<Case>, DetectError>;
 }
 
 impl CaseDetect for Case {
-    fn detect(word: &str) -> Result<Option<Case>, DetectError> {
-        if word.chars().any(|c| c.is_whitespace()) {
-            return Err(DetectError::InvalidInputError(word));
+    fn detect(token: &str) -> Result<Option<Case>, DetectError> {
+        if token.chars().any(|c| c.is_whitespace()) {
+            return Err(DetectError::InvalidInputError(token));
         }
 
         todo!("TODO: Normal flow of the function")
@@ -31,6 +30,6 @@ mod tests {
         let result= Case::detect("not token");
 
         assert!(result.is_err());
-        assert_eq!(format!("{}", result.unwrap_err()), "input 'not token' is not a word");
+        assert_eq!(format!("{}", result.unwrap_err()), "input 'not token' is not a token");
     }
 }

@@ -32,7 +32,7 @@ impl CaseMatcher for Case {
         match self {
             Case::CamelCase => Regex::new(r"^[a-z]([a-z]|[A-Z])*$").unwrap(),
             Case::ShoutingSnakeCase => Regex::new(r"^([A-Z]|_)*$").unwrap(),
-            Case::PascalCase => Regex::new(r"^[A-Z]([a-z]|[A-Z]*)$").unwrap(),
+            Case::PascalCase => Regex::new(r"^[A-Z]([a-z]|[A-Z])*$").unwrap(),
             Case::SnakeCase => Regex::new(r"^([a-z]|_)*$").unwrap(),
             Case::KebabCase => Regex::new(r"^([a-z]|-)*$").unwrap(),
         }
@@ -75,6 +75,20 @@ mod tests {
     #[test]
     fn detects_not_shouting_snake() {
         let result = Case::ShoutingSnakeCase.matcher().is_match("shoutingSnake");
+
+        assert!(!result);
+    }
+
+    #[test]
+    fn detects_pascal_case() {
+        let result = Case::PascalCase.matcher().is_match("PascalCase");
+
+        assert!(result);
+    }
+
+    #[test]
+    fn detects_not_pascal_case() {
+        let result = Case::PascalCase.matcher().is_match("pascal-case");
 
         assert!(!result);
     }

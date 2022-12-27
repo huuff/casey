@@ -106,4 +106,18 @@ mod tests {
         
         assert!(!result);
     }
+
+    #[test]
+    fn detects_kebab_case() {
+        let result = Case::KebabCase.matcher().is_match("kebab-case");
+
+        assert!(result);
+    }
+
+    #[test]
+    fn detects_not_kebab_case() {
+        let result = Case::KebabCase.matcher().is_match("kebab_case");
+
+        assert!(!result);
+    }
 }

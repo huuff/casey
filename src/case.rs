@@ -1,8 +1,10 @@
 pub enum Case {
-    PASCAL_CASE,
-    CAMEL_CASE,
-    SNAKE_CASE,
-    KEBAB_CASE,
-    SHOUTING_SNAKE_CASE,
-    SHOUTING_KEBAB_CASE,
+    // Uppercase
+    PascalCase,
+    ShoutingSnakeCase,
+
+    // Lowercase
+    CamelCase,
+    SnakeCase,
+    KebabCase,
 }

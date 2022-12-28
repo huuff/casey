@@ -103,5 +103,26 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn correct_percentages() -> Result<(), Box<dyn Error>> {
+        // ARRANGE
+        let mut reader = BufReader::new(r#"
+            camelCaseFirst snake_case_first
+            camelCaseSecond camelCaseThird
+            snake_case_second snake_case_third PascalCase
+        "#.as_bytes());
+        
+        // ACT
+        let report = CaseReport::from(&mut reader)?;
+        let percentages = report.percentages();
+
+        // ASSERT
+        assert_eq!(percentages[&Case::CamelCase], 42.857143f32);
+        assert_eq!(percentages[&Case::SnakeCase], 42.857143f32);
+        assert_eq!(percentages[&Case::PascalCase], 14.285715f32);
+
+        Ok(())
+    }
 }
 

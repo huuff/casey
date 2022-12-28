@@ -2,11 +2,16 @@ mod case;
 mod detect;
 mod matchers;
 mod report;
-mod args;
 
-use clap::Parser;
-use args::Args;
+use clap::{command, Command};
 
 fn main() {
-    let args = Args::parse();
+    let args = command!()
+        .subcommand_required(true)
+        .subcommand(
+            Command::new("detect")
+            .about("detects used cases in an input")
+        )
+        .get_matches()
+        ;
 }

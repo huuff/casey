@@ -14,7 +14,7 @@ impl CaseReport {
         for line in input.lines() {
             for token in line?.split_whitespace() {
                 if let Some(case) = Case::detect(token)? {
-                    *occurrences.entry(case).or_insert(1) += 1;
+                    *occurrences.entry(case).or_insert(0) += 1;
                 }
             }
         }
@@ -25,6 +25,8 @@ impl CaseReport {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashSet;
+
     use super::*;
 
     #[test]
@@ -39,6 +41,29 @@ mod tests {
         let present_cases: Vec<&Case> = report.occurrences.keys().collect();
         assert_eq!(present_cases.len(), 1);
         assert_eq!(present_cases[0], &Case::CamelCase);
+        assert_eq!(report.occurrences[&Case::CamelCase], 1);
+
+        Ok(())
+    }
+
+    #[test]
+    fn finds_several_cases() -> Result<(), Box<dyn Error>> {
+        // ARRANGE
+        let mut reader = BufReader::new(r#"
+            camelCaseFirst snake_case_first
+            camelCaseSecond camelCaseThird
+            snake_case_second snake_case_third PascalCase
+        "#.as_bytes());
+
+        // ACT
+        let report = CaseReport::from(&mut reader)?;
+
+        // ASSERT
+        let present_cases: HashSet<&Case> = report.occurrences.keys().collect();
+        assert_eq!(present_cases.len(), 3);
+        assert_eq!(report.occurrences[&Case::CamelCase], 3);
+        assert_eq!(report.occurrences[&Case::SnakeCase], 3);
+        assert_eq!(report.occurrences[&Case::PascalCase], 1);
 
         Ok(())
     }

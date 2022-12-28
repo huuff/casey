@@ -27,6 +27,15 @@ impl CaseReport {
                             .max_by(|x, y| x.1.cmp(y.1))
                             .map(|it| it.0)
     }
+
+    pub fn percentages(&self) -> HashMap<Case, f32> {
+       let total_occurrences: u32 = self.occurrences.values().sum();
+
+       self.occurrences.clone()
+                        .into_iter()
+                        .map(|(case, occ)| (case, (occ as f32/total_occurrences as f32) * 100f32))
+                        .collect()
+    }
 }
 
 #[cfg(test)]

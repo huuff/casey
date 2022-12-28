@@ -21,6 +21,12 @@ impl CaseReport {
 
         Ok(CaseReport { occurrences })
     }
+
+    pub fn main(&self) -> Option<&Case> {
+            self.occurrences.iter()
+                            .max_by(|x, y| x.1.cmp(y.1))
+                            .map(|it| it.0)
+    }
 }
 
 #[cfg(test)]
@@ -64,6 +70,27 @@ mod tests {
         assert_eq!(report.occurrences[&Case::CamelCase], 3);
         assert_eq!(report.occurrences[&Case::SnakeCase], 3);
         assert_eq!(report.occurrences[&Case::PascalCase], 1);
+
+        Ok(())
+    }
+
+    #[test]
+    fn finds_most_used_case() -> Result<(), Box<dyn Error>> {
+        // ARRANGE
+        let mut reader = BufReader::new(r#"
+            camelCaseFirst snake_case_first
+            camelCaseSecond camelCaseThird
+            snake_case_second snake_case_third PascalCase
+            camelCase
+        "#.as_bytes());
+
+        // ACT
+        let report = CaseReport::from(&mut reader)?;
+        let main_case = report.main();
+
+        // ASSERT
+        assert!(main_case.is_some());
+        assert_eq!(main_case.unwrap(), &Case::CamelCase);
 
         Ok(())
     }

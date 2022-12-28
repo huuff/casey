@@ -4,19 +4,19 @@ use strum::IntoEnumIterator;
 use crate::matchers::CaseMatcher;
 
 #[derive(Error, Debug)]
-pub enum DetectError<'a> {
+pub enum DetectError {
    #[error("input '{0}' is not a token")]
-    InvalidInputError(&'a str)
+    InvalidInputError(String)
 }
 
-trait CaseDetect {
+pub trait CaseDetect {
     fn detect(token: &str) -> Result<Option<Case>, DetectError>;
 }
 
 impl CaseDetect for Case {
     fn detect(token: &str) -> Result<Option<Case>, DetectError> {
         if token.chars().any(|c| c.is_whitespace()) {
-            return Err(DetectError::InvalidInputError(token));
+            return Err(DetectError::InvalidInputError(String::from(token)));
         }
 
         let mut matching_cases: Vec<Case> = Case::iter().filter(|c| c.matcher().is_match(token)).collect();

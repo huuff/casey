@@ -1,7 +1,7 @@
 use crate::case::Case;
 use std::collections::HashMap;
 use std::error::Error;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead};
 use crate::detect::CaseDetect;
 
 pub struct CaseReport {
@@ -40,9 +40,10 @@ impl CaseReport {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashSet;
-
     use super::*;
+    use std::io::BufReader;
+
+    use std::collections::HashSet;
 
     #[test]
     fn finds_single_camel_case() -> Result<(), Box<dyn Error>> {

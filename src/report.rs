@@ -73,6 +73,19 @@ impl <T: Num + Ord> CaseReport<T> {
 #[derive(Debug)]
 pub struct PercentageCaseReport(ProportionCaseReport);
 
+impl Display for PercentageCaseReport {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FormatResult {
+        let result = self.0.frequencies.iter()
+                                     .sorted_by(|x, y| x.1.partial_cmp(&y.1).unwrap())
+                                     .rev()
+                                     .map(|(case, freq)| format!("{case}: {freq}%"))
+                                     .join("\n")
+                                     ;
+
+        write!(f, "{}", result)
+    }
+}
+
 impl ProportionCaseReport {
     pub fn as_percentages(&self) -> Result<PercentageCaseReport, CaseReportError> {
         for proportion in self.frequencies.values() {

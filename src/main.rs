@@ -10,6 +10,7 @@ use std::fs::File;
 use std::error::Error;
 use std::io::{self, BufReader, BufRead};
 use report::{CaseReport, FrequencyCaseReport};
+use std::fmt::Display;
 
 fn main() -> Result<(), Box<dyn Error>> {
     // TODO: Correct cargo metadata
@@ -28,8 +29,14 @@ fn main() -> Result<(), Box<dyn Error>> {
             if let Some(print_report) = print_report {
                 // Print the full report
                 let report_type = print_report.unwrap_or(ReportType::Percentage);
-                let report = report.proportions().as_percentages()?;
-                println!("{:#?}", report);
+
+                let report: Box<dyn Display> = match report_type {
+                    ReportType::Frequency => Box::new(report),
+                    ReportType::Proportion => Box::new(report.proportions()),
+                    ReportType::Percentage => Box::new(report.proportions().as_percentages()?),
+                };
+
+                println!("{}", report);
 
             } else {
                 // Print only the main case

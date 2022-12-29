@@ -22,10 +22,10 @@ pub struct CaseReport<T> {
 pub type FrequencyCaseReport = CaseReport<u32>;
 type ProportionCaseReport = CaseReport<f32>;
 
-impl Display for FrequencyCaseReport {
+impl <T: Num + Display + PartialOrd> Display for CaseReport<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FormatResult {
         let result = self.frequencies.iter()
-                                     .sorted_by_key(|s| s.1)
+                                     .sorted_by(|x, y| x.1.partial_cmp(&y.1).unwrap())
                                      .rev()
                                      .map(|(case, freq)| format!("{case}: {freq}"))
                                      .join("\n")

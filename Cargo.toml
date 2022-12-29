@@ -1,7 +1,9 @@
 [package]
 name = "casey-next"
 version = "0.1.0"
+authors = ["Haf"]
 edition = "2021"
+description = "Detect and convert different case formats from the command line"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

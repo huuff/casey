@@ -14,7 +14,6 @@ use report::FrequencyCaseReport;
 use std::fmt::Display;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // TODO: Correct cargo metadata
     let args = Args::parse();
 
     match args.command {

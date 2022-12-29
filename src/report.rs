@@ -5,6 +5,8 @@ use std::io::BufRead;
 use crate::detect::CaseDetect;
 use num_traits::Num;
 use thiserror::Error as ThisError;
+use std::fmt::{Formatter, Display, Result as FormatResult};
+use itertools::Itertools;
 
 #[derive(ThisError, PartialEq, Debug)]
 pub enum CaseReportError {
@@ -19,6 +21,22 @@ pub struct CaseReport<T> {
 
 pub type FrequencyCaseReport = CaseReport<u32>;
 type ProportionCaseReport = CaseReport<f32>;
+
+impl Display for FrequencyCaseReport {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FormatResult {
+        let mut result = String::new();
+        let ordered_freqs = self.frequencies.iter()
+                                            .sorted_by_key(|f| f.1)
+                                            .rev()
+                                            ;
+
+        for (case, freq) in ordered_freqs {
+            result.push_str(&format!("{case}: {freq}"));
+        }
+
+        write!(f, "{}", result)
+    }
+}
 
 impl FrequencyCaseReport {
     pub fn from<T: BufRead>(input: &mut T) -> Result<Self, Box<dyn Error>> {
@@ -181,9 +199,9 @@ mod tests {
         let percentages_report = proportion_report.as_percentages()?;
 
         // ASSERT
-        assert_relative_eq!(percentages_report.frequencies[&Case::CamelCase], 25_f32);
-        assert_relative_eq!(percentages_report.frequencies[&Case::PascalCase], 30_f32);
-        assert_relative_eq!(percentages_report.frequencies[&Case::SnakeCase], 45_f32);
+        assert_relative_eq!(percentages_report.0.frequencies[&Case::CamelCase], 25_f32);
+        assert_relative_eq!(percentages_report.0.frequencies[&Case::PascalCase], 30_f32);
+        assert_relative_eq!(percentages_report.0.frequencies[&Case::SnakeCase], 45_f32);
 
         Ok(())
     }

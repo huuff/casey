@@ -1,15 +1,18 @@
 use crate::case::Case;
 use std::collections::HashMap;
 use std::error::Error;
-use std::io::{BufRead};
+use std::io::BufRead;
 use crate::detect::CaseDetect;
 
-pub struct CaseReport {
-    pub occurrences: HashMap<Case, u32>,
+pub struct CaseReport<T> {
+    pub occurrences: HashMap<Case, T>,
 }
 
-impl CaseReport {
-    pub fn from<T: BufRead>(input: &mut T) -> Result<CaseReport, Box<dyn Error>> {
+type IntegerCaseReport = CaseReport<u32>;
+type ProportionCaseReport = CaseReport<f32>;
+
+impl IntegerCaseReport {
+    pub fn from<T: BufRead>(input: &mut T) -> Result<Self, Box<dyn Error>> {
         let mut occurrences: HashMap<Case, u32> = HashMap::new(); 
         for line in input.lines() {
             for token in line?.split_whitespace() {
@@ -28,13 +31,15 @@ impl CaseReport {
                             .map(|it| it.0)
     }
 
-    pub fn percentages(&self) -> HashMap<Case, f32> {
+    pub fn percentages(&self) -> ProportionCaseReport {
        let total_occurrences: u32 = self.occurrences.values().sum();
 
-       self.occurrences.clone()
-                        .into_iter()
-                        .map(|(case, occ)| (case, (occ as f32/total_occurrences as f32) * 100f32))
-                        .collect()
+       ProportionCaseReport {
+           occurrences: self.occurrences.clone()
+                            .into_iter()
+                            .map(|(case, occ)| (case, (occ as f32/total_occurrences as f32) * 100f32))
+                            .collect()
+       }
     }
 }
 
@@ -119,9 +124,9 @@ mod tests {
         let percentages = report.percentages();
 
         // ASSERT
-        assert_eq!(percentages[&Case::CamelCase], 42.857143f32);
-        assert_eq!(percentages[&Case::SnakeCase], 42.857143f32);
-        assert_eq!(percentages[&Case::PascalCase], 14.285715f32);
+        assert_eq!(percentages.occurrences[&Case::CamelCase], 42.857143f32);
+        assert_eq!(percentages.occurrences[&Case::SnakeCase], 42.857143f32);
+        assert_eq!(percentages.occurrences[&Case::PascalCase], 14.285715f32);
 
         Ok(())
     }

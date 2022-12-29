@@ -6,13 +6,14 @@ use crate::detect::CaseDetect;
 use num_traits::Num;
 use thiserror::Error as ThisError;
 
-#[derive(ThisError, Debug)]
+#[derive(ThisError, PartialEq, Debug)]
 pub enum CaseReportError {
     #[error("source report frequency '{0}' is not in the 0..1 range, so it can't be converted to percentages")]
     PercentageConversionError(f32),
 }
 
 // TODO: Change "occurrences" to "frequency" everywhere
+#[derive(Debug)]
 pub struct CaseReport<T> {
     pub occurrences: HashMap<Case, T>,
 }
@@ -180,6 +181,21 @@ mod tests {
         assert_relative_eq!(percentages_report.occurrences[&Case::SnakeCase], 45_f32);
 
         Ok(())
+    }
+
+    #[test]
+    fn as_percentages_bad_input() {
+        // ARRANGE
+        let proportion_report = ProportionCaseReport {
+            occurrences: HashMap::from([(Case::CamelCase, 100_f32)])
+        };
+
+        // ACT
+        let as_percentages = proportion_report.as_percentages();
+
+        // ASSERT
+        assert!(as_percentages.is_err());
+        assert_eq!(as_percentages.unwrap_err(), CaseReportError::PercentageConversionError(100_f32));
     }
 }
 

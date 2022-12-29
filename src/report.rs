@@ -64,8 +64,8 @@ impl ProportionCaseReport {
 mod tests {
     use super::*;
     use std::io::BufReader;
-
-    use std::collections::HashSet;
+    use std::collections::{HashSet, HashMap};
+    use approx::assert_relative_eq;
 
     #[test]
     fn finds_single_camel_case() -> Result<(), Box<dyn Error>> {
@@ -144,6 +144,28 @@ mod tests {
         assert_eq!(proportions.occurrences[&Case::CamelCase], 0.42857143_f32);
         assert_eq!(proportions.occurrences[&Case::SnakeCase], 0.42857143_f32);
         assert_eq!(proportions.occurrences[&Case::PascalCase], 0.14285715_f32);
+
+        Ok(())
+    }
+
+    #[test]
+    fn as_percentages() -> Result<(), Box<dyn Error>> {
+        // ARRANGE
+        let proportion_report = ProportionCaseReport {
+            occurrences: HashMap::from([
+                (Case::CamelCase, 0.25_f32),
+                (Case::PascalCase, 0.3_f32),
+                (Case::SnakeCase, 0.45_f32),
+            ]),
+        };
+
+        // ACT
+        let percentages_report = proportion_report.as_percentages();
+
+        // ASSERT
+        assert_relative_eq!(percentages_report.occurrences[&Case::CamelCase], 25_f32);
+        assert_relative_eq!(percentages_report.occurrences[&Case::PascalCase], 30_f32);
+        assert_relative_eq!(percentages_report.occurrences[&Case::SnakeCase], 45_f32);
 
         Ok(())
     }

@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::io::BufRead;
 use crate::detect::CaseDetect;
+use num_traits::Num;
 
 pub struct CaseReport<T> {
     pub occurrences: HashMap<Case, T>,
@@ -25,12 +26,6 @@ impl IntegerCaseReport {
         Ok(CaseReport { occurrences })
     }
 
-    pub fn main(&self) -> Option<&Case> {
-            self.occurrences.iter()
-                            .max_by(|x, y| x.1.cmp(y.1))
-                            .map(|it| it.0)
-    }
-
     pub fn proportions(&self) -> ProportionCaseReport {
        let total_occurrences: u32 = self.occurrences.values().sum();
 
@@ -40,6 +35,14 @@ impl IntegerCaseReport {
                                         .map(|(case, occ)| (case, (occ as f32/total_occurrences as f32)))
                                         .collect()
        }
+    }
+}
+
+impl <T: Num + Ord> CaseReport<T> {
+    pub fn main(&self) -> Option<&Case> {
+            self.occurrences.iter()
+                            .max_by(|x, y| x.1.cmp(y.1))
+                            .map(|it| it.0)
     }
 }
 

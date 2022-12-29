@@ -24,15 +24,12 @@ type ProportionCaseReport = CaseReport<f32>;
 
 impl Display for FrequencyCaseReport {
     fn fmt(&self, f: &mut Formatter<'_>) -> FormatResult {
-        let mut result = String::new();
-        let ordered_freqs = self.frequencies.iter()
-                                            .sorted_by_key(|f| f.1)
-                                            .rev()
-                                            ;
-
-        for (case, freq) in ordered_freqs {
-            result.push_str(&format!("{case}: {freq}"));
-        }
+        let result = self.frequencies.iter()
+                                     .sorted_by_key(|s| s.1)
+                                     .rev()
+                                     .map(|(case, freq)| format!("{case}: {freq}"))
+                                     .join("\n")
+                                     ;
 
         write!(f, "{}", result)
     }
@@ -241,7 +238,7 @@ mod tests {
             PascalCase: 3
             snake_case: 2
             camelCase: 1
-        "#});
+        "#}.trim());
     }
 }
 

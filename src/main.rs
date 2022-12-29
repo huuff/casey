@@ -3,13 +3,14 @@ mod detect;
 mod matchers;
 mod report;
 mod args;
+mod convert;
 
 use clap::Parser;
 use args::{Args, Command, ReportType};
 use std::fs::File;
 use std::error::Error;
 use std::io::{self, BufReader, BufRead};
-use report::{CaseReport, FrequencyCaseReport};
+use report::FrequencyCaseReport;
 use std::fmt::Display;
 
 fn main() -> Result<(), Box<dyn Error>> {

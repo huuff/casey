@@ -15,6 +15,7 @@ fn main() {
                     .arg(arg!(-f --file [FILE] "from file"))
                     .arg(arg!(-i --stdin "from stdin"))
                     .arg(arg!(-m --main "detect only the main case"))
+                    // TODO: Argument to decide the output (json, table, csv, etc.)
                     .arg(arg!(-a --all "detect all cases with their frequencies"))
                     .group(
                         // TODO: Default of stdin

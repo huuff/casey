@@ -16,7 +16,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
     match args.command {
-        Command::Detect { file, stdin } => {
+        Command::Detect { file, stdin, main, report: print_report } => {
             let mut input_read: Box<dyn BufRead> = if let Some(file_name) = file {
                 Box::new(BufReader::new(File::open(file_name)?))
             } else {
@@ -24,12 +24,16 @@ fn main() -> Result<(), Box<dyn Error>> {
             };
 
             let report = FrequencyCaseReport::from(&mut input_read)?;
-            
-            if let Some(main_case) = report.main() {
-                println!("{}", main_case);
-            } else {
-                println!("Unable to detect a case!");
+
+            if !print_report {
+                // Print only the main case
+                if let Some(main_case) = report.main() {
+                    println!("{}", main_case);
+                } else {
+                    println!("Unable to detect a case!");
+                }
             }
+            
         },
         Command::Convert {} => {
 

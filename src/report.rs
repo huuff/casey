@@ -4,7 +4,15 @@ use std::error::Error;
 use std::io::BufRead;
 use crate::detect::CaseDetect;
 use num_traits::Num;
+use thiserror::Error as ThisError;
 
+#[derive(ThisError, Debug)]
+pub enum CaseReportError {
+    #[error("source report frequency '{0}' is not in the 0..1 range, so it can't be converted to percentages")]
+    PercentageConversionError(f32),
+}
+
+// TODO: Change "occurrences" to "frequency" everywhere
 pub struct CaseReport<T> {
     pub occurrences: HashMap<Case, T>,
 }
@@ -47,16 +55,20 @@ impl <T: Num + Ord> CaseReport<T> {
 }
 
 impl ProportionCaseReport {
-    pub fn as_percentages(&self) -> Self {
-        // TODO: Return error when proportions are not in the 0..1 range (thiserror)
+    pub fn as_percentages(&self) -> Result<Self, CaseReportError> {
+        for proportion in self.occurrences.values() {
+            if !(0f32..=1f32).contains(proportion) {
+                return Err(CaseReportError::PercentageConversionError(*proportion))
+            }
+        }
 
-        ProportionCaseReport {
+        Ok(ProportionCaseReport {
             occurrences: self.occurrences.clone()
                                          .into_iter()
                                          .map(|(x, y)| (x, y * 100_f32))
                                          .collect()
                     
-        }
+        })
     }
 }
 
@@ -160,7 +172,7 @@ mod tests {
         };
 
         // ACT
-        let percentages_report = proportion_report.as_percentages();
+        let percentages_report = proportion_report.as_percentages()?;
 
         // ASSERT
         assert_relative_eq!(percentages_report.occurrences[&Case::CamelCase], 25_f32);

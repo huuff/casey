@@ -253,5 +253,30 @@ mod tests {
             camelCase: 1
         "#}.trim());
     }
+
+    #[test]
+    fn percentage_case_report_display() {
+        // ARRANGE
+        let report = PercentageCaseReport(
+            ProportionCaseReport {
+                frequencies: HashMap::from([
+                    (Case::SnakeCase, 22.5_f32),
+                    (Case::KebabCase, 43.3_f32),
+                    (Case::PascalCase, 19.99_f32),
+                ]),
+            }
+        );
+
+        // ACT
+        let display = format!("{}", report);
+
+        // ASSERT
+        assert_eq!(display, indoc! {r#"
+            kebab-case: 43.3%
+            snake_case: 22.5%
+            PascalCase: 19.99%
+        "#}.trim());
+    }
+
 }
 

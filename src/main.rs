@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
     match args.command {
-        Command::Detect { file, stdin, main, report: print_report } => {
+        Command::Detect { file, stdin: _, main: _, report: print_report } => {
             let mut input_read: Box<dyn BufRead> = if let Some(file_name) = file {
                 Box::new(BufReader::new(File::open(file_name)?))
             } else {

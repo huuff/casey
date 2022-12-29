@@ -13,7 +13,6 @@ pub enum Case {
     KebabCase,
 }
 
-// TODO: Test
 impl Display for Case {
     fn fmt(&self, f: &mut Formatter) -> FormatResult {
         write!(f, "{}", match self {
@@ -23,5 +22,15 @@ impl Display for Case {
             Case::SnakeCase => "snake_case",
             Case::KebabCase => "kebab-case",
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn display_camel_case() {
+        assert_eq!(format!("{}", Case::CamelCase), "camelCase");
     }
 }

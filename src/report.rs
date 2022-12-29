@@ -47,6 +47,7 @@ impl FrequencyCaseReport {
 }
 
 impl <T: Num + Ord> CaseReport<T> {
+    // TODO: What if there's a tie?
     pub fn main(&self) -> Option<&Case> {
             self.frequencies.iter()
                             .max_by(|x, y| x.1.cmp(y.1))

@@ -34,4 +34,10 @@ fn main() {
                 ) 
         .get_matches()
         ;
+
+    match args.subcommand() {
+       Some(("detect", sub_args)) => println!("Detect"),
+       Some(("convert", sub_args)) => println!("Convert"),
+       _ => unreachable!("Some subcommand must habe been chosen")
+    }
 }

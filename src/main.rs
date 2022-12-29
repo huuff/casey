@@ -6,6 +6,7 @@ mod report;
 use clap::{arg, command, Command, ArgGroup};
 
 fn main() {
+    // TODO: Can't I show the help instead of an error when no command is provided?
     let args = command!()
         .subcommand_required(true)
         .subcommand(

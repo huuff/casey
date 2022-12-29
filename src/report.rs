@@ -12,10 +12,9 @@ pub enum CaseReportError {
     PercentageConversionError(f32),
 }
 
-// TODO: Change "occurrences" to "frequency" everywhere
 #[derive(Debug)]
 pub struct CaseReport<T> {
-    pub occurrences: HashMap<Case, T>,
+    pub frequencies: HashMap<Case, T>,
 }
 
 type IntegerCaseReport = CaseReport<u32>;
@@ -23,25 +22,25 @@ type ProportionCaseReport = CaseReport<f32>;
 
 impl IntegerCaseReport {
     pub fn from<T: BufRead>(input: &mut T) -> Result<Self, Box<dyn Error>> {
-        let mut occurrences: HashMap<Case, u32> = HashMap::new(); 
+        let mut frequencies: HashMap<Case, u32> = HashMap::new(); 
         for line in input.lines() {
             for token in line?.split_whitespace() {
                 if let Some(case) = Case::detect(token)? {
-                    *occurrences.entry(case).or_insert(0) += 1;
+                    *frequencies.entry(case).or_insert(0) += 1;
                 }
             }
         }
 
-        Ok(CaseReport { occurrences })
+        Ok(CaseReport { frequencies })
     }
 
     pub fn proportions(&self) -> ProportionCaseReport {
-       let total_occurrences: u32 = self.occurrences.values().sum();
+       let total_frequencies: u32 = self.frequencies.values().sum();
 
        ProportionCaseReport {
-           occurrences: self.occurrences.clone()
+           frequencies: self.frequencies.clone()
                                         .into_iter()
-                                        .map(|(case, occ)| (case, (occ as f32/total_occurrences as f32)))
+                                        .map(|(case, occ)| (case, (occ as f32/total_frequencies as f32)))
                                         .collect()
        }
     }
@@ -49,7 +48,7 @@ impl IntegerCaseReport {
 
 impl <T: Num + Ord> CaseReport<T> {
     pub fn main(&self) -> Option<&Case> {
-            self.occurrences.iter()
+            self.frequencies.iter()
                             .max_by(|x, y| x.1.cmp(y.1))
                             .map(|it| it.0)
     }
@@ -57,14 +56,14 @@ impl <T: Num + Ord> CaseReport<T> {
 
 impl ProportionCaseReport {
     pub fn as_percentages(&self) -> Result<Self, CaseReportError> {
-        for proportion in self.occurrences.values() {
+        for proportion in self.frequencies.values() {
             if !(0f32..=1f32).contains(proportion) {
                 return Err(CaseReportError::PercentageConversionError(*proportion))
             }
         }
 
         Ok(ProportionCaseReport {
-            occurrences: self.occurrences.clone()
+            frequencies: self.frequencies.clone()
                                          .into_iter()
                                          .map(|(x, y)| (x, y * 100_f32))
                                          .collect()
@@ -89,10 +88,10 @@ mod tests {
         let report = CaseReport::from(&mut reader)?;
 
         // ASSERT
-        let present_cases: Vec<&Case> = report.occurrences.keys().collect();
+        let present_cases: Vec<&Case> = report.frequencies.keys().collect();
         assert_eq!(present_cases.len(), 1);
         assert_eq!(present_cases[0], &Case::CamelCase);
-        assert_eq!(report.occurrences[&Case::CamelCase], 1);
+        assert_eq!(report.frequencies[&Case::CamelCase], 1);
 
         Ok(())
     }
@@ -110,11 +109,11 @@ mod tests {
         let report = CaseReport::from(&mut reader)?;
 
         // ASSERT
-        let present_cases: HashSet<&Case> = report.occurrences.keys().collect();
+        let present_cases: HashSet<&Case> = report.frequencies.keys().collect();
         assert_eq!(present_cases.len(), 3);
-        assert_eq!(report.occurrences[&Case::CamelCase], 3);
-        assert_eq!(report.occurrences[&Case::SnakeCase], 3);
-        assert_eq!(report.occurrences[&Case::PascalCase], 1);
+        assert_eq!(report.frequencies[&Case::CamelCase], 3);
+        assert_eq!(report.frequencies[&Case::SnakeCase], 3);
+        assert_eq!(report.frequencies[&Case::PascalCase], 1);
 
         Ok(())
     }
@@ -154,9 +153,9 @@ mod tests {
         let proportions = report.proportions();
 
         // ASSERT
-        assert_eq!(proportions.occurrences[&Case::CamelCase], 0.42857143_f32);
-        assert_eq!(proportions.occurrences[&Case::SnakeCase], 0.42857143_f32);
-        assert_eq!(proportions.occurrences[&Case::PascalCase], 0.14285715_f32);
+        assert_eq!(proportions.frequencies[&Case::CamelCase], 0.42857143_f32);
+        assert_eq!(proportions.frequencies[&Case::SnakeCase], 0.42857143_f32);
+        assert_eq!(proportions.frequencies[&Case::PascalCase], 0.14285715_f32);
 
         Ok(())
     }
@@ -165,7 +164,7 @@ mod tests {
     fn as_percentages() -> Result<(), Box<dyn Error>> {
         // ARRANGE
         let proportion_report = ProportionCaseReport {
-            occurrences: HashMap::from([
+            frequencies: HashMap::from([
                 (Case::CamelCase, 0.25_f32),
                 (Case::PascalCase, 0.3_f32),
                 (Case::SnakeCase, 0.45_f32),
@@ -176,9 +175,9 @@ mod tests {
         let percentages_report = proportion_report.as_percentages()?;
 
         // ASSERT
-        assert_relative_eq!(percentages_report.occurrences[&Case::CamelCase], 25_f32);
-        assert_relative_eq!(percentages_report.occurrences[&Case::PascalCase], 30_f32);
-        assert_relative_eq!(percentages_report.occurrences[&Case::SnakeCase], 45_f32);
+        assert_relative_eq!(percentages_report.frequencies[&Case::CamelCase], 25_f32);
+        assert_relative_eq!(percentages_report.frequencies[&Case::PascalCase], 30_f32);
+        assert_relative_eq!(percentages_report.frequencies[&Case::SnakeCase], 45_f32);
 
         Ok(())
     }
@@ -187,7 +186,7 @@ mod tests {
     fn as_percentages_bad_input() {
         // ARRANGE
         let proportion_report = ProportionCaseReport {
-            occurrences: HashMap::from([(Case::CamelCase, 100_f32)])
+            frequencies: HashMap::from([(Case::CamelCase, 100_f32)])
         };
 
         // ACT

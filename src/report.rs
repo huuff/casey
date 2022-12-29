@@ -31,14 +31,14 @@ impl IntegerCaseReport {
                             .map(|it| it.0)
     }
 
-    pub fn percentages(&self) -> ProportionCaseReport {
+    pub fn proportions(&self) -> ProportionCaseReport {
        let total_occurrences: u32 = self.occurrences.values().sum();
 
        ProportionCaseReport {
            occurrences: self.occurrences.clone()
-                            .into_iter()
-                            .map(|(case, occ)| (case, (occ as f32/total_occurrences as f32) * 100f32))
-                            .collect()
+                                        .into_iter()
+                                        .map(|(case, occ)| (case, (occ as f32/total_occurrences as f32)))
+                                        .collect()
        }
     }
 }
@@ -111,7 +111,7 @@ mod tests {
     }
 
     #[test]
-    fn correct_percentages() -> Result<(), Box<dyn Error>> {
+    fn correct_proportions() -> Result<(), Box<dyn Error>> {
         // ARRANGE
         let mut reader = BufReader::new(r#"
             camelCaseFirst snake_case_first
@@ -121,12 +121,12 @@ mod tests {
         
         // ACT
         let report = CaseReport::from(&mut reader)?;
-        let percentages = report.percentages();
+        let proportions = report.proportions();
 
         // ASSERT
-        assert_eq!(percentages.occurrences[&Case::CamelCase], 42.857143f32);
-        assert_eq!(percentages.occurrences[&Case::SnakeCase], 42.857143f32);
-        assert_eq!(percentages.occurrences[&Case::PascalCase], 14.285715f32);
+        assert_eq!(proportions.occurrences[&Case::CamelCase], 0.42857143_f32);
+        assert_eq!(proportions.occurrences[&Case::SnakeCase], 0.42857143_f32);
+        assert_eq!(proportions.occurrences[&Case::PascalCase], 0.14285715_f32);
 
         Ok(())
     }

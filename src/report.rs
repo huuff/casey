@@ -46,6 +46,20 @@ impl <T: Num + Ord> CaseReport<T> {
     }
 }
 
+impl ProportionCaseReport {
+    pub fn as_percentages(&self) -> Self {
+        // TODO: Return error when proportions are not in the 0..1 range (thiserror)
+
+        ProportionCaseReport {
+            occurrences: self.occurrences.clone()
+                                         .into_iter()
+                                         .map(|(x, y)| (x, y * 100_f32))
+                                         .collect()
+                    
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

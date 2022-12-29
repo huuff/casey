@@ -32,6 +32,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 } else {
                     println!("Unable to detect a case!");
                 }
+            } else {
+                // Print the full report
+                let report = report.proportions().as_percentages()?;
+                println!("{:#?}", report);
             }
             
         },

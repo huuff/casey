@@ -17,10 +17,10 @@ pub struct CaseReport<T> {
     pub frequencies: HashMap<Case, T>,
 }
 
-type IntegerCaseReport = CaseReport<u32>;
+pub type FrequencyCaseReport = CaseReport<u32>;
 type ProportionCaseReport = CaseReport<f32>;
 
-impl IntegerCaseReport {
+impl FrequencyCaseReport {
     pub fn from<T: BufRead>(input: &mut T) -> Result<Self, Box<dyn Error>> {
         let mut frequencies: HashMap<Case, u32> = HashMap::new(); 
         for line in input.lines() {

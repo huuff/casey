@@ -1,4 +1,4 @@
-use clap::{Parser, Subcommand, ArgGroup};
+use clap::{Parser, Subcommand, ArgGroup, ValueEnum};
 
 #[derive(Parser)]
 #[command(author, version)]
@@ -22,10 +22,17 @@ pub enum Command {
         #[arg(short, long, group = "output")]
         main: bool,
 
-        #[arg(short, long, group = "output")]
-        report: bool,
+        #[arg(short, long, group = "output", )]
+        report: Option<Option<ReportType>>,
     },
     Convert {
     },
 }
 
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+pub enum ReportType {
+    Frequency,
+    Proportion,
+    Percentage,
+}

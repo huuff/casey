@@ -5,7 +5,7 @@ mod report;
 mod args;
 
 use clap::Parser;
-use args::{Args, Command};
+use args::{Args, Command, ReportType};
 use std::fs::File;
 use std::error::Error;
 use std::io::{self, BufReader, BufRead};
@@ -25,19 +25,20 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             let report = FrequencyCaseReport::from(&mut input_read)?;
 
-            if !print_report {
+            if let Some(print_report) = print_report {
+                // Print the full report
+                let report_type = print_report.unwrap_or(ReportType::Percentage);
+                let report = report.proportions().as_percentages()?;
+                println!("{:#?}", report);
+
+            } else {
                 // Print only the main case
                 if let Some(main_case) = report.main() {
                     println!("{}", main_case);
                 } else {
                     println!("Unable to detect a case!");
                 }
-            } else {
-                // Print the full report
-                let report = report.proportions().as_percentages()?;
-                println!("{:#?}", report);
             }
-            
         },
         Command::Convert {} => {
 

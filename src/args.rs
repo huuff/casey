@@ -7,22 +7,22 @@ pub struct Args {
     pub command: Command,
 }
 
+// TODO: Description for commands
 #[derive(Subcommand)]
 #[command(group = ArgGroup::new("input").multiple(false))]
 #[command(group = ArgGroup::new("output").multiple(false))]
-// TODO: Descriptions for arguments
 pub enum Command {
     Detect {
-        #[arg(short, long, group = "input")]
+        #[arg(short, long, group = "input", help = "Detect cases from file")]
         file: Option<String>,
 
-        #[arg(short, long, group = "input")]
+        #[arg(short, long, group = "input", help = "Detect cases from stdin")]
         stdin: bool,
 
-        #[arg(short, long, group = "output")]
+        #[arg(short, long, group = "output", help = "Print only the most frequent case in input")]
         main: bool,
 
-        #[arg(short, long, group = "output", )]
+        #[arg(short, long, group = "output", help = "Print all used cases")]
         report: Option<Option<ReportType>>,
     },
     Convert {
@@ -30,6 +30,7 @@ pub enum Command {
 }
 
 
+// TODO: Can I show a description for each type?
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 pub enum ReportType {
     Frequency,

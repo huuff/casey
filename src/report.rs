@@ -102,6 +102,7 @@ mod tests {
     use std::io::BufReader;
     use std::collections::{HashSet, HashMap};
     use approx::assert_relative_eq;
+    use indoc::indoc;
 
     #[test]
     fn finds_single_camel_case() -> Result<(), Box<dyn Error>> {
@@ -219,6 +220,28 @@ mod tests {
         // ASSERT
         assert!(as_percentages.is_err());
         assert_eq!(as_percentages.unwrap_err(), CaseReportError::PercentageConversionError(100_f32));
+    }
+
+    #[test]
+    fn frequency_case_report_display() {
+        // ARRANGE
+        let report = CaseReport {
+            frequencies: HashMap::from([
+                (Case::CamelCase, 1),
+                (Case::SnakeCase, 2),
+                (Case::PascalCase, 3)
+            ]),
+        };
+
+        // ACT
+        let result = format!("{}", report);
+
+        // ASSERT
+        assert_eq!(result, indoc! {r#"
+            PascalCase: 3
+            snake_case: 2
+            camelCase: 1
+        "#});
     }
 }
 

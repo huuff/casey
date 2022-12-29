@@ -55,21 +55,26 @@ impl <T: Num + Ord> CaseReport<T> {
     }
 }
 
+#[derive(Debug)]
+pub struct PercentageCaseReport(ProportionCaseReport);
+
 impl ProportionCaseReport {
-    pub fn as_percentages(&self) -> Result<Self, CaseReportError> {
+    pub fn as_percentages(&self) -> Result<PercentageCaseReport, CaseReportError> {
         for proportion in self.frequencies.values() {
             if !(0f32..=1f32).contains(proportion) {
                 return Err(CaseReportError::PercentageConversionError(*proportion))
             }
         }
 
-        Ok(ProportionCaseReport {
-            frequencies: self.frequencies.clone()
-                                         .into_iter()
-                                         .map(|(x, y)| (x, y * 100_f32))
-                                         .collect()
+        Ok(PercentageCaseReport(
+            ProportionCaseReport {
+                frequencies: self.frequencies.clone()
+                                             .into_iter()
+                                             .map(|(x, y)| (x, y * 100_f32))
+                                             .collect()
                     
-        })
+            })
+        )
     }
 }
 

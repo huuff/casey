@@ -40,10 +40,12 @@ pub enum Command {
 }
 
 
-// TODO: Can I show a description for each type?
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 pub enum ReportType {
+    #[value(help = "Times each case is used in input")]
     Frequency,
+    #[value(help = "Proportion between 0 and 1 that each case is used in input")]
     Proportion,
+    #[value(help = "Percentage of times each case is used in input")]
     Percentage,
 }

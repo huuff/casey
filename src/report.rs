@@ -36,7 +36,7 @@ impl <T: Num + Display + PartialOrd> Display for CaseReport<T> {
 }
 
 impl FrequencyCaseReport {
-    pub fn from<T: BufRead>(input: &mut T) -> Result<Self, Box<dyn Error>> {
+    pub fn from<T: BufRead>(input: &mut T) -> Result<Option<Self>, Box<dyn Error>> {
         let mut frequencies: HashMap<Case, u32> = HashMap::new(); 
         for line in input.lines() {
             for token in line?.split_whitespace() {
@@ -46,7 +46,12 @@ impl FrequencyCaseReport {
             }
         }
 
-        Ok(CaseReport { frequencies })
+        if !frequencies.is_empty() {
+            Ok(Some(CaseReport { frequencies }))
+        } else {
+            Ok(None)
+        }
+
     }
 
     pub fn proportions(&self) -> ProportionCaseReport {
@@ -63,10 +68,14 @@ impl FrequencyCaseReport {
 
 impl <T: Num + Ord> CaseReport<T> {
     // TODO: What if there's a tie?
-    pub fn main(&self) -> Option<&Case> {
-            self.frequencies.iter()
+    pub fn main(&self) -> Case {
+            // No problem calling unwrap...
+            // the report can't be created if there are
+            // 0 instances
+            *self.frequencies.iter()
                             .max_by(|x, y| x.1.cmp(y.1))
                             .map(|it| it.0)
+                            .unwrap()
     }
 }
 
@@ -120,7 +129,7 @@ mod tests {
         let mut reader = BufReader::new("camelCase".as_bytes());
 
         // ACT
-        let report = CaseReport::from(&mut reader)?;
+        let report = CaseReport::from(&mut reader)?.unwrap();
 
         // ASSERT
         let present_cases: Vec<&Case> = report.frequencies.keys().collect();
@@ -141,7 +150,7 @@ mod tests {
         "#.as_bytes());
 
         // ACT
-        let report = CaseReport::from(&mut reader)?;
+        let report = CaseReport::from(&mut reader)?.unwrap();
 
         // ASSERT
         let present_cases: HashSet<&Case> = report.frequencies.keys().collect();
@@ -165,11 +174,10 @@ mod tests {
 
         // ACT
         let report = CaseReport::from(&mut reader)?;
-        let main_case = report.main();
+        let main_case = report.unwrap().main();
 
         // ASSERT
-        assert!(main_case.is_some());
-        assert_eq!(main_case.unwrap(), &Case::CamelCase);
+        assert_eq!(main_case, Case::CamelCase);
 
         Ok(())
     }
@@ -185,7 +193,7 @@ mod tests {
         
         // ACT
         let report = CaseReport::from(&mut reader)?;
-        let proportions = report.proportions();
+        let proportions = report.unwrap().proportions();
 
         // ASSERT
         assert_eq!(proportions.frequencies[&Case::CamelCase], 0.42857143_f32);

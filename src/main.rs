@@ -33,18 +33,23 @@ fn main() -> Result<(), Box<dyn Error>> {
                 // Print the full report
                 let report_type = print_report.unwrap_or(ReportType::Percentage);
 
-                let report: Box<dyn Display> = match report_type {
-                    ReportType::Frequency => Box::new(report),
-                    ReportType::Proportion => Box::new(report.proportions()),
-                    ReportType::Percentage => Box::new(report.proportions().as_percentages()?),
-                };
+                if let Some(report) = report {
+                    let report: Box<dyn Display> = match report_type {
+                        ReportType::Frequency => Box::new(report),
+                        ReportType::Proportion => Box::new(report.proportions()),
+                        ReportType::Percentage => Box::new(report.proportions().as_percentages()?),
+                    };
 
-                println!("{}", report);
+                    println!("{}", report);
+                } else {
+                    eprintln!("Unable to detect a case!");
+                    std::process::exit(1);
+                }
 
             } else {
                 // Print only the main case
-                if let Some(main_case) = report.main() {
-                    println!("{}", main_case);
+                if let Some(report) = report {
+                    println!("{}", report.main());
                 } else {
                     eprintln!("Unable to detect a case!");
                     std::process::exit(1);

@@ -1,4 +1,5 @@
 use crate::case::Case;
+use std::io::Write;
 use heck::*;
 
 pub trait ConvertCaseTo {
@@ -16,6 +17,12 @@ impl ConvertCaseTo for str {
         }
     }
 }
+
+pub trait BufferedConvert {
+    fn buffered_convert<const T: usize>(from_to_cases: [(Case, Case); T], target: Box<dyn Write>);
+}
+
+
 
 #[cfg(test)]
 mod tests {

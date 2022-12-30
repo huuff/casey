@@ -21,12 +21,12 @@ impl ConvertCaseTo for str {
 }
 
 pub trait BufferedConvert {
-    fn buffered_convert<const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: &mut Box<dyn Write>) -> Result<(), Box<dyn Error>>;
+    fn buffered_convert<'a, const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>>;
 }
 
 impl <T: BufRead> BufferedConvert for T {
     // TODO: I guess I should be outputting newlines too
-    fn buffered_convert<const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: &mut Box<dyn Write>) -> Result<(), Box<dyn Error>> {
+    fn buffered_convert<'a, const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>> {
         for line in self.lines() {
             let line = line?;
             let converted_line = SplitPreserveWS::new(line.as_str())
@@ -43,7 +43,7 @@ impl <T: BufRead> BufferedConvert for T {
                 })
                 .collect::<String>()
             ;
-            output.write_all(converted_line.as_bytes())?;
+            (*output).write_all(converted_line.as_bytes())?;
         }
 
         Ok(())
@@ -55,9 +55,28 @@ impl <T: BufRead> BufferedConvert for T {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::io::BufReader;
 
     #[test]
     fn to_kebab_case() {
         assert_eq!("camel-case", "camelCase".convert_case_to(Case::KebabCase));
+    }
+
+    #[test]
+    fn converts_single_line_single_case() -> Result<(), Box<dyn Error>> {
+        // ARRANGE
+        let mut input = BufReader::new(
+            "snake_case text with lowercase_words_separated_by_underscore".as_bytes()
+        );
+        let mut output = vec![];
+
+        // ACT
+        input.buffered_convert([(Case::SnakeCase, Case::CamelCase)], Box::new(&mut output))?;
+        let output = String::from_utf8(output)?;
+
+
+        // ASSERT
+        assert_eq!(output, String::from("snakeCase text with lowercaseWordsSeparatedByUnderscore"));
+        Ok(())
     }
 }

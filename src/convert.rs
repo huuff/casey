@@ -1,6 +1,8 @@
-use crate::case::Case;
-use std::io::{Write, BufRead, Read};
+use crate::{case::Case, detect::CaseDetect};
+use std::io::{Write, BufRead};
 use heck::*;
+use split_preserve::*;
+use std::error::Error;
 
 pub trait ConvertCaseTo {
     fn convert_case_to(&self, target_case: Case) -> String;
@@ -19,12 +21,32 @@ impl ConvertCaseTo for str {
 }
 
 pub trait BufferedConvert {
-    fn buffered_convert<const SIZE: usize>(from_to_cases: [(Case, Case); SIZE], target: Box<dyn Write>);
+    fn buffered_convert<const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: &mut Box<dyn Write>) -> Result<(), Box<dyn Error>>;
 }
 
 impl <T: BufRead> BufferedConvert for T {
-    fn buffered_convert<const SIZE: usize>(from_to_cases: [(Case, Case); SIZE], target: Box<dyn Write>) {
-       todo!("Actual implementation"); 
+    // TODO: I guess I should be outputting newlines too
+    fn buffered_convert<const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: &mut Box<dyn Write>) -> Result<(), Box<dyn Error>> {
+        for line in self.lines() {
+            let line = line?;
+            let converted_line = SplitPreserveWS::new(line.as_str())
+                .map_words(|w| {
+                    let case = Case::detect(w).unwrap();
+                    if let Some(case) = case {
+                        for (source_case, target_case) in from_to_cases {
+                           if source_case == case {
+                                return w.convert_case_to(target_case);
+                           } 
+                        }
+                    } 
+                    return String::from(w);
+                })
+                .collect::<String>()
+            ;
+            output.write_all(converted_line.as_bytes())?;
+        }
+
+        Ok(())
     }
 }
 

@@ -25,7 +25,6 @@ pub trait BufferedConvert {
 }
 
 impl <T: BufRead> BufferedConvert for T {
-    // TODO: I guess I should be outputting newlines too
     fn buffered_convert<'a, const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>> {
         let mut lines = self.lines().peekable();
         while let Some(line) = lines.next() {

@@ -36,6 +36,20 @@ pub enum Command {
     },
     #[command(about = "Convert between case types")]
     Convert {
+        #[arg(short, long, group = "input", help = "Converts cases from a file")]
+        file: Option<String>,
+
+        #[arg(short, long, group = "input", help = "Converts cases from stdin")]
+        stdin: bool,
+
+        #[arg(
+            short,
+            long,
+            group = "input", 
+            help = "Converts the case of a single inline argument",
+            conflicts_with = "report",
+        )]
+        inline: Option<String>,
     },
 }
 

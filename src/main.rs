@@ -56,8 +56,14 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
             }
         },
-        Command::Convert {} => {
-
+        Command::Convert { file, stdin: _, mut inline, } => {
+            let mut input_read: Box<dyn BufRead> = if let Some(file_name) = file {
+                Box::new(BufReader::new(File::open(file_name)?))
+            } else if let Some(token) = inline.take() {
+                Box::new(BufReader::new(Cursor::new(token.into_bytes())))
+            } else {
+                Box::new(BufReader::new(io::stdin()))
+            };
         }
     };
 

@@ -46,7 +46,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 if let Some(main_case) = report.main() {
                     println!("{}", main_case);
                 } else {
-                    println!("Unable to detect a case!");
+                    eprintln!("Unable to detect a case!");
+                    std::process::exit(1);
                 }
             }
         },

@@ -1,7 +1,7 @@
 use strum_macros::EnumIter;
 use std::fmt::{Formatter, Display, Result as FormatResult};
 
-#[derive(Debug, EnumIter, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, EnumIter, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Case {
     // Uppercase
     PascalCase,

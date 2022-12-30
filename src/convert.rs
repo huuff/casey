@@ -90,6 +90,7 @@ mod tests {
         let mut input = BufReader::new(indoc! {r#"
             ThisIsSome text with
             SomePascalCased words and
+
             also some NewLines interspesed
         "#}.trim().as_bytes());
         let mut output = vec![];
@@ -103,6 +104,7 @@ mod tests {
         assert_eq!(output, indoc! {r#"
             this-is-some text with
             some-pascal-cased words and
+
             also some new-lines interspesed
         "#}.trim());
         Ok(())

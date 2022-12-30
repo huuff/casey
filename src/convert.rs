@@ -56,6 +56,7 @@ impl <T: BufRead> BufferedConvert for T {
 mod tests {
     use super::*;
     use std::io::BufReader;
+    use indoc::indoc;
 
     #[test]
     fn to_kebab_case() {
@@ -77,6 +78,29 @@ mod tests {
 
         // ASSERT
         assert_eq!(output, String::from("snakeCase text with lowercaseWordsSeparatedByUnderscore"));
+        Ok(())
+    }
+    #[test]
+    fn works_with_multiple_newlines() -> Result<(), Box<dyn Error>> {
+        // ARRANGE
+        let mut input = BufReader::new(indoc! {r#"
+            ThisIsSome text with
+            SomePascalCased words and
+            also some NewLines interspesed
+        "#}.trim().as_bytes());
+        let mut output = vec![];
+
+        // ACT
+        input.buffered_convert([(Case::PascalCase, Case::KebabCase)], Box::new(&mut output))?;
+        let output = String::from_utf8(output)?;
+
+
+        // ASSERT
+        assert_eq!(output, indoc! {r#"
+            this-is-some text with
+            some-pascal-cased words and
+            also some new-lines interspesed
+        "#}.trim());
         Ok(())
     }
 }

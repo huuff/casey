@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand, ArgGroup, ValueEnum};
 
+use crate::case::Case;
+
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct Args {
@@ -47,9 +49,16 @@ pub enum Command {
             long,
             group = "input", 
             help = "Converts the case of a single inline argument",
-            conflicts_with = "report",
         )]
         inline: Option<String>,
+
+        #[arg(long, required=true)]
+        from: Vec<String>,
+
+        #[arg(long, required=true)]
+        to: Vec<String>,
+
+
     },
 }
 

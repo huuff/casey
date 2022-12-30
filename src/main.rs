@@ -5,7 +5,7 @@ mod report;
 mod args;
 mod convert;
 
-use clap::Parser;
+use clap::{Parser, CommandFactory};
 use args::{Args, Command, ReportType};
 use std::fs::File;
 use std::error::Error;
@@ -56,7 +56,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
             }
         },
-        Command::Convert { file, stdin: _, mut inline, } => {
+        Command::Convert { file, stdin: _, mut inline, from, to } => {
             let mut input_read: Box<dyn BufRead> = if let Some(file_name) = file {
                 Box::new(BufReader::new(File::open(file_name)?))
             } else if let Some(token) = inline.take() {
@@ -64,6 +64,14 @@ fn main() -> Result<(), Box<dyn Error>> {
             } else {
                 Box::new(BufReader::new(io::stdin()))
             };
+
+            if from.len() != to.len() {
+                Args::command().error(
+                    clap::error::ErrorKind::TooFewValues,
+                    "You must provide one --to argument for each --from argument"
+                ).exit();
+            }
+
         }
     };
 

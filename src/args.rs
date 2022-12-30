@@ -7,11 +7,11 @@ pub struct Args {
     pub command: Command,
 }
 
-// TODO: Description for commands
 #[derive(Subcommand)]
 #[command(group = ArgGroup::new("input").multiple(false))]
 #[command(group = ArgGroup::new("output").multiple(false))]
 pub enum Command {
+    #[command(about = "Detect the cases used in an input")]
     Detect {
         #[arg(short, long, group = "input", help = "Detect cases from file")]
         file: Option<String>,
@@ -34,6 +34,7 @@ pub enum Command {
         #[arg(short, long, group = "output", help = "Print all used cases")]
         report: Option<Option<ReportType>>,
     },
+    #[command(about = "Convert between case types")]
     Convert {
     },
 }

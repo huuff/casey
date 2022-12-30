@@ -72,6 +72,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 ).exit();
             }
 
+            let conversions = from.iter().zip(to.iter());
+
+
         }
     };
 

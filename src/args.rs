@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand, ArgGroup, ValueEnum};
-
 use crate::case::Case;
+use strum::IntoEnumIterator;
 
 #[derive(Parser)]
 #[command(author, version, about)]
@@ -53,15 +53,14 @@ pub enum Command {
         inline: Option<String>,
 
         #[arg(long, required=true)]
-        from: Vec<String>,
+        from: Vec<Case>,
 
         #[arg(long, required=true)]
-        to: Vec<String>,
+        to: Vec<Case>,
 
 
     },
 }
-
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 pub enum ReportType {
@@ -72,3 +71,11 @@ pub enum ReportType {
     #[value(help = "Percentage of times each case is used in input")]
     Percentage,
 }
+
+//fn case_parser(s: &str) -> Result<Case, String> {
+    //for case in Case::iter() {
+        //if s == format!("{}", case) {
+            //return Ok(case);
+        //}
+    //}
+//}

@@ -1,15 +1,22 @@
 use strum_macros::EnumIter;
 use std::fmt::{Formatter, Display, Result as FormatResult};
+use clap::ValueEnum;
 
-#[derive(Debug, EnumIter, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, EnumIter, PartialEq, Eq, Hash, Clone, Copy, ValueEnum)]
+// TODO: Some clap help
 pub enum Case {
     // Uppercase
+    #[value(aliases = ["PascalCase", "pc"]) ]
     PascalCase,
+    #[value(aliases = ["SHOUTING_SNAKE_CASE", "ssc"]) ]
     ShoutingSnakeCase,
 
     // Lowercase
+    #[value(aliases = ["camelCase", "cc"])]
     CamelCase,
+    #[value(aliases = ["snake_case", "sc"])]
     SnakeCase,
+    #[value(aliases = ["kebab-case", "kc"])]
     KebabCase,
 }
 

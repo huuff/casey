@@ -27,7 +27,8 @@ pub trait BufferedConvert {
 impl <T: BufRead> BufferedConvert for T {
     // TODO: I guess I should be outputting newlines too
     fn buffered_convert<'a, const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>> {
-        for line in self.lines() {
+        let mut lines = self.lines().peekable();
+        while let Some(line) = lines.next() {
             let line = line?;
             let converted_line = SplitPreserveWS::new(line.as_str())
                 .map_words(|w| {
@@ -44,6 +45,9 @@ impl <T: BufRead> BufferedConvert for T {
                 .collect::<String>()
             ;
             (*output).write_all(converted_line.as_bytes())?;
+            if lines.peek().is_some() {
+                (*output).write_all(b"\n")?;
+            }
         }
 
         Ok(())
@@ -77,7 +81,7 @@ mod tests {
 
 
         // ASSERT
-        assert_eq!(output, String::from("snakeCase text with lowercaseWordsSeparatedByUnderscore"));
+        assert_eq!(output, "snakeCase text with lowercaseWordsSeparatedByUnderscore");
         Ok(())
     }
     #[test]

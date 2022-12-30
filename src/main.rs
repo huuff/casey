@@ -12,14 +12,18 @@ use std::error::Error;
 use std::io::{self, BufReader, BufRead};
 use report::FrequencyCaseReport;
 use std::fmt::Display;
+use std::io::Cursor;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
     match args.command {
-        Command::Detect { file, stdin: _, main: _, report: print_report } => {
+        Command::Detect { file, stdin: _, mut inline, main: _, report: print_report } => {
             let mut input_read: Box<dyn BufRead> = if let Some(file_name) = file {
                 Box::new(BufReader::new(File::open(file_name)?))
+            } else if let Some(token) = inline.take() {
+                // TODO: Make inline incompatible with anything other than "main"
+                Box::new(BufReader::new(Cursor::new(token.into_bytes())))
             } else {
                 Box::new(BufReader::new(io::stdin()))
             };

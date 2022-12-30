@@ -19,6 +19,9 @@ pub enum Command {
         #[arg(short, long, group = "input", help = "Detect cases from stdin")]
         stdin: bool,
 
+        #[arg(short, long, group = "input", help = "Detect from a single inline argument")]
+        inline: Option<String>,
+
         #[arg(short, long, group = "output", help = "Print only the most frequent case in input")]
         main: bool,
 

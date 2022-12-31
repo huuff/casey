@@ -52,7 +52,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             } else {
                 // Print only the main case
                 if let Some(report) = report {
-                    println!("{}", report.main());
+                    match report.main() {
+                        Ok(main_case) => println!("{}", main_case),
+                        Err(err) => eprintln!("{}", err),
+                    }
                 } else {
                     eprintln!("Unable to detect a case!");
                     std::process::exit(1);

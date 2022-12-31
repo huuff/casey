@@ -1,5 +1,5 @@
 use crate::case::Case;
-use std::collections::HashMap;
+use std::{collections::HashMap, cmp::Ordering};
 use std::error::Error;
 use std::io::BufRead;
 use crate::detect::CaseDetect;
@@ -12,6 +12,8 @@ use itertools::Itertools;
 pub enum CaseReportError {
     #[error("source report frequency '{0}' is not in the 0..1 range, so it can't be converted to percentages")]
     PercentageConversionError(f32),
+    #[error("there's more than one primarily used case: {0:?}")]
+    ManyMainCasesError(Vec<Case>),
 }
 
 #[derive(Debug)]
@@ -66,16 +68,30 @@ impl FrequencyCaseReport {
     }
 }
 
-impl <T: Num + Ord> CaseReport<T> {
-    // TODO: What if there's a tie?
-    pub fn main(&self) -> Case {
+impl <T: Num + Ord + PartialEq + Copy> CaseReport<T> {
+    // TODO: Test with a tie
+    pub fn main(&self) -> Result<Case, CaseReportError> {
             // No problem calling unwrap...
             // the report can't be created if there are
             // 0 instances
-            *self.frequencies.iter()
+            let main_case = *self.frequencies.iter()
                             .max_by(|x, y| x.1.cmp(y.1))
                             .map(|it| it.0)
-                            .unwrap()
+                            .unwrap();
+            let main_case_occurrences = self.frequencies[&main_case];
+            let main_cases = self.frequencies
+                .iter()
+                .map(|(case, freq)| (*case, *freq))
+                .filter(|(_, freq)| freq.partial_cmp(&main_case_occurrences).unwrap_or(Ordering::Equal).is_eq())
+                .map(|it| it.0)
+                .collect_vec()
+                ;
+
+            if main_cases.len() == 1 {
+                Ok(main_case)
+            } else {
+                Err(CaseReportError::ManyMainCasesError(main_cases))
+            }
     }
 }
 
@@ -174,7 +190,7 @@ mod tests {
 
         // ACT
         let report = CaseReport::from(&mut reader)?;
-        let main_case = report.unwrap().main();
+        let main_case = report.unwrap().main()?;
 
         // ASSERT
         assert_eq!(main_case, Case::CamelCase);

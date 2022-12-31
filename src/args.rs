@@ -10,15 +10,15 @@ pub struct Args {
 }
 
 #[derive(Subcommand)]
-#[command(group = ArgGroup::new("input").multiple(false))]
+#[command(group = ArgGroup::new("input_group").multiple(false))]
 #[command(group = ArgGroup::new("output").multiple(false))]
 pub enum Command {
     #[command(about = "Detect the cases used in an input")]
     Detect {
-        #[arg(short, long, group = "input", help = "Detect cases from file")]
+        #[arg(short, long, group = "input_group", help = "Detect cases from file")]
         file: Option<String>,
 
-        #[arg(short, long, group = "input", help = "Detect cases from stdin")]
+        #[arg(short, long, group = "input_group", help = "Detect cases from stdin")]
         stdin: bool,
 
         #[arg(
@@ -30,24 +30,24 @@ pub enum Command {
         )]
         inline: Option<String>,
 
-        #[arg(short, long, group = "output", help = "Print only the most frequent case in input")]
+        #[arg(short, long, group = "output_group", help = "Print only the most frequent case in input")]
         main: bool,
 
-        #[arg(short, long, group = "output", help = "Print all used cases")]
+        #[arg(short, long, group = "output_group", help = "Print all used cases")]
         report: Option<Option<ReportType>>,
     },
     #[command(about = "Convert between case types")]
     Convert {
-        #[arg(short, long, group = "input", help = "Converts cases from a file")]
+        #[arg(short, long, group = "input_group", help = "Converts cases from a file")]
         file: Option<String>,
 
-        #[arg(short, long, group = "input", help = "Converts cases from stdin")]
+        #[arg(short, long, group = "input_group", help = "Converts cases from stdin")]
         stdin: bool,
 
         #[arg(
             short,
             long,
-            group = "input", 
+            group = "input_group", 
             help = "Converts the case of a single inline argument",
         )]
         inline: Option<String>,
@@ -58,11 +58,11 @@ pub enum Command {
         #[arg(long, required=true)]
         to: Vec<Case>,
 
-        #[arg(long, group = "output", help = "Print to stdout")]
+        #[arg(long, group = "output_group", help = "Print to stdout")]
         stdout: bool,
 
-        #[arg(short, long, group = "output", help = "Print to file")]
-        out: Option<String>,
+        #[arg(short, long, group = "output_group", help = "Print to file")]
+        output: Option<String>,
 
     },
 }

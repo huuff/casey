@@ -58,7 +58,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
             }
         },
-        Command::Convert { file, stdin: _, mut inline, from, to, stdout: _, out } => {
+        Command::Convert { file, stdin: _, mut inline, from, to, stdout: _, output } => {
             let mut input: Box<dyn BufRead> = if let Some(file_name) = file {
                 Box::new(BufReader::new(File::open(file_name)?))
             } else if let Some(token) = inline.take() {
@@ -79,7 +79,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let mut file_write;
             let mut stdout_write;
 
-            let output: Box<&mut dyn Write> = if let Some(file_name) = out {
+            let output: Box<&mut dyn Write> = if let Some(file_name) = output {
                 // TODO: Append if file exists?
                 file_write = File::create(file_name)?;
                 Box::new(&mut file_write)

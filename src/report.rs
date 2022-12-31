@@ -69,7 +69,6 @@ impl FrequencyCaseReport {
 }
 
 impl <T: Num + Ord + PartialEq + Copy> CaseReport<T> {
-    // TODO: Test with a tie
     pub fn main(&self) -> Result<Case, CaseReportError> {
             // No problem calling unwrap...
             // the report can't be created if there are
@@ -300,6 +299,24 @@ mod tests {
             snake_case: 22.5%
             PascalCase: 19.99%
         "#}.trim());
+    }
+
+    #[test]
+    fn more_than_one_case_error() {
+        // ARRANGE
+        let report = CaseReport {
+            frequencies: HashMap::from([
+                (Case::CamelCase, 1),
+                (Case::SnakeCase, 1),
+            ]),
+        };
+
+        // ACT
+        let result = report.main();
+
+        // ASSERT
+        assert!(result.is_err());
+        assert_eq!(format!("{}", result.unwrap_err()), "there's more than one primarily used case: [SnakeCase, CamelCase]")
     }
 
 }

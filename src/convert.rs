@@ -54,8 +54,6 @@ impl <T: BufRead> BufferedConvert for T {
 }
 
 
-
-// TODO: Test with several case conversions
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -84,6 +82,7 @@ mod tests {
         assert_eq!(output, "snakeCase text with lowercaseWordsSeparatedByUnderscore");
         Ok(())
     }
+
     #[test]
     fn works_with_multiple_newlines() -> Result<(), Box<dyn Error>> {
         // ARRANGE
@@ -106,6 +105,34 @@ mod tests {
             some-pascal-cased words and
 
             also some new-lines interspesed
+        "#}.trim());
+        Ok(())
+    }
+
+    #[test]
+    fn works_with_multiple_conversions() -> Result<(), Box<dyn Error>> {
+        // ARRANGE
+        let mut input = BufReader::new(indoc! {r#"
+            ThisIsSome text with
+            someCamelCased words and
+            also some PascalCased words
+        "#}.trim().as_bytes());
+        let mut output = vec![];
+
+        // ACT
+        let coversions = vec![
+            (Case::PascalCase, Case::KebabCase),
+            (Case::CamelCase, Case::SnakeCase),
+        ];
+        input.buffered_convert(&coversions, Box::new(&mut output))?;
+        let output = String::from_utf8(output)?;
+
+
+        // ASSERT
+        assert_eq!(output, indoc! {r#"
+            this-is-some text with
+            some_camel_cased words and
+            also some pascal-cased words
         "#}.trim());
         Ok(())
     }

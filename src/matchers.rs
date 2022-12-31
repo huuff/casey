@@ -10,10 +10,10 @@ impl CaseMatcher for Case {
     fn matcher(&self) -> &Regex {
         match self {
             Case::CamelCase => regex!(r"^[a-z]([a-z]|[A-Z])*$"),
-            Case::ShoutingSnakeCase => regex!(r"^([A-Z]|_)*$"),
+            Case::ShoutingSnakeCase => regex!(r"^([A-Z]|_)+$"),
             Case::PascalCase => regex!(r"^[A-Z]([a-z]|[A-Z])*$"),
-            Case::SnakeCase => regex!(r"^([a-z]|_)*$"),
-            Case::KebabCase => regex!(r"^([a-z]|-)*$"),
+            Case::SnakeCase => regex!(r"^([a-z]|_)+$"),
+            Case::KebabCase => regex!(r"^([a-z]|-)+$"),
         }
     }
 }

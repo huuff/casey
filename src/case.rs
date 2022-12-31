@@ -2,7 +2,7 @@ use strum_macros::EnumIter;
 use std::fmt::{Formatter, Display, Result as FormatResult};
 use clap::ValueEnum;
 
-#[derive(Debug, EnumIter, PartialEq, Eq, Hash, Clone, Copy, ValueEnum)]
+#[derive(Debug, EnumIter, PartialEq, Eq, Hash, Clone, Copy, ValueEnum, Ord, PartialOrd)]
 pub enum Case {
     // Uppercase
     #[value(aliases = ["PascalCase", "pc"], help = "or PascalCase or pc") ]

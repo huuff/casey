@@ -45,7 +45,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
                     println!("{}", report);
                 } else {
-                    eprintln!("Unable to detect a case!");
+                    eprintln!("Unable to detect cases.");
                     std::process::exit(1);
                 }
 
@@ -54,10 +54,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 if let Some(report) = report {
                     match report.main() {
                         Ok(main_case) => println!("{}", main_case),
-                        Err(err) => eprintln!("{}", err),
+                        Err(err) => eprintln!("Unable to detect a primarily used case: {}.", err),
                     }
                 } else {
-                    eprintln!("Unable to detect a case!");
+                    eprintln!("Unable to detect a primarily used case.");
                     std::process::exit(1);
                 }
             }

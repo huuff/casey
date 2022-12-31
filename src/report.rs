@@ -83,6 +83,7 @@ impl <T: Num + Ord + PartialEq + Copy> CaseReport<T> {
                 .map(|(case, freq)| (*case, *freq))
                 .filter(|(_, freq)| freq.partial_cmp(&main_case_occurrences).unwrap_or(Ordering::Equal).is_eq())
                 .map(|it| it.0)
+                .sorted()
                 .collect_vec()
                 ;
 
@@ -316,7 +317,7 @@ mod tests {
 
         // ASSERT
         assert!(result.is_err());
-        assert_eq!(format!("{}", result.unwrap_err()), "there's more than one primarily used case: [SnakeCase, CamelCase]")
+        assert_eq!(format!("{}", result.unwrap_err()), "there's more than one primarily used case: [CamelCase, SnakeCase]")
     }
 
 }

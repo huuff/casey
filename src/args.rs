@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand, ArgGroup, ValueEnum};
 use crate::case::Case;
-use strum::IntoEnumIterator;
 
 #[derive(Parser)]
 #[command(author, version, about)]

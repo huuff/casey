@@ -8,13 +8,14 @@ mod convert;
 use clap::{Parser, CommandFactory};
 use args::{Args, Command, ReportType};
 use convert::BufferedConvert;
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::error::Error;
 use std::io::{self, BufReader, BufRead, Write};
 use report::FrequencyCaseReport;
 use std::fmt::Display;
 use std::io::Cursor;
 use case::Case;
+use std::path::Path;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
@@ -80,8 +81,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             let mut stdout_write;
 
             let output: Box<&mut dyn Write> = if let Some(file_name) = output {
-                // TODO: Append if file exists?
-                file_write = File::create(file_name)?;
+                file_write = if Path::new(&file_name).is_file() {
+                    OpenOptions::new().append(true).open(file_name)?
+                } else {
+                    File::create(file_name)?
+                };
                 Box::new(&mut file_write)
             } else {
                 stdout_write = io::stdout();

@@ -7,12 +7,14 @@ mod convert;
 
 use clap::{Parser, CommandFactory};
 use args::{Args, Command, ReportType};
+use convert::BufferedConvert;
 use std::fs::File;
 use std::error::Error;
-use std::io::{self, BufReader, BufRead};
+use std::io::{self, BufReader, BufRead, Write};
 use report::FrequencyCaseReport;
 use std::fmt::Display;
 use std::io::Cursor;
+use case::Case;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
@@ -56,8 +58,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
             }
         },
-        Command::Convert { file, stdin: _, mut inline, from, to } => {
-            let mut input_read: Box<dyn BufRead> = if let Some(file_name) = file {
+        Command::Convert { file, stdin: _, mut inline, from, to, stdout: _, output } => {
+            let mut input: Box<dyn BufRead> = if let Some(file_name) = file {
                 Box::new(BufReader::new(File::open(file_name)?))
             } else if let Some(token) = inline.take() {
                 Box::new(BufReader::new(Cursor::new(token.into_bytes())))
@@ -72,8 +74,16 @@ fn main() -> Result<(), Box<dyn Error>> {
                 ).exit();
             }
 
-            let conversions = from.iter().zip(to.iter());
+            let conversions: Vec<(Case, Case)> = from.into_iter().zip(to.into_iter()).collect();
 
+            //let mut output: Box<&mut dyn Write> = if let Some(file_name) = output {
+                //// TODO: Append if file exists?
+                //Box::new(&mut File::create(file_name)?)
+            //} else {
+                //Box::new(&mut io::stdout())
+            //};
+
+            //input.buffered_convert(conversions, output);
 
         }
     };

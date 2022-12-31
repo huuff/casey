@@ -21,11 +21,11 @@ impl ConvertCaseTo for str {
 }
 
 pub trait BufferedConvert {
-    fn buffered_convert<'a, const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>>;
+    fn buffered_convert<'a>(&mut self, from_to_cases: &Vec<(Case, Case)>, output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>>;
 }
 
 impl <T: BufRead> BufferedConvert for T {
-    fn buffered_convert<'a, const SIZE: usize>(&mut self, from_to_cases: [(Case, Case); SIZE], output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>> {
+    fn buffered_convert<'a>(&mut self, from_to_cases: &Vec<(Case, Case)>, output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>> {
         let mut lines = self.lines().peekable();
         while let Some(line) = lines.next() {
             let line = line?;
@@ -34,8 +34,8 @@ impl <T: BufRead> BufferedConvert for T {
                     let case = Case::detect(w).unwrap();
                     if let Some(case) = case {
                         for (source_case, target_case) in from_to_cases {
-                           if source_case == case {
-                                return w.convert_case_to(target_case);
+                           if *source_case == case {
+                                return w.convert_case_to(*target_case);
                            } 
                         }
                     } 
@@ -55,6 +55,7 @@ impl <T: BufRead> BufferedConvert for T {
 
 
 
+// TODO: Test with several case conversions
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -75,7 +76,7 @@ mod tests {
         let mut output = vec![];
 
         // ACT
-        input.buffered_convert([(Case::SnakeCase, Case::CamelCase)], Box::new(&mut output))?;
+        input.buffered_convert(&vec![(Case::SnakeCase, Case::CamelCase)], Box::new(&mut output))?;
         let output = String::from_utf8(output)?;
 
 
@@ -95,7 +96,7 @@ mod tests {
         let mut output = vec![];
 
         // ACT
-        input.buffered_convert([(Case::PascalCase, Case::KebabCase)], Box::new(&mut output))?;
+        input.buffered_convert(&vec![(Case::PascalCase, Case::KebabCase)], Box::new(&mut output))?;
         let output = String::from_utf8(output)?;
 
 

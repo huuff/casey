@@ -58,6 +58,11 @@ pub enum Command {
         #[arg(long, required=true)]
         to: Vec<Case>,
 
+        #[arg(long, group = "output", help = "Print to stdout")]
+        stdout: bool,
+
+        #[arg(short, long, group = "output", help = "Print to file")]
+        output: Option<String>,
 
     },
 }
@@ -71,11 +76,3 @@ pub enum ReportType {
     #[value(help = "Percentage of times each case is used in input")]
     Percentage,
 }
-
-//fn case_parser(s: &str) -> Result<Case, String> {
-    //for case in Case::iter() {
-        //if s == format!("{}", case) {
-            //return Ok(case);
-        //}
-    //}
-//}

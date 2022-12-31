@@ -3,20 +3,19 @@ use std::fmt::{Formatter, Display, Result as FormatResult};
 use clap::ValueEnum;
 
 #[derive(Debug, EnumIter, PartialEq, Eq, Hash, Clone, Copy, ValueEnum)]
-// TODO: Some clap help
 pub enum Case {
     // Uppercase
-    #[value(aliases = ["PascalCase", "pc"]) ]
+    #[value(aliases = ["PascalCase", "pc"], help = "or PascalCase or pc") ]
     PascalCase,
-    #[value(aliases = ["SHOUTING_SNAKE_CASE", "ssc"]) ]
+    #[value(aliases = ["SHOUTING_SNAKE_CASE", "ssc"], help = "or SHOUTING_SNAKE_CASE or ssc") ]
     ShoutingSnakeCase,
 
     // Lowercase
-    #[value(aliases = ["camelCase", "cc"])]
+    #[value(aliases = ["camelCase", "cc"], help = "or camelCase or cc")]
     CamelCase,
-    #[value(aliases = ["snake_case", "sc"])]
+    #[value(aliases = ["snake_case", "sc"], help = "or snake_case or sc")]
     SnakeCase,
-    #[value(aliases = ["kebab-case", "kc"])]
+    #[value(aliases = ["kebab-case", "kc"], help = "or kc")]
     KebabCase,
 }
 

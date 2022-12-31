@@ -62,7 +62,7 @@ pub enum Command {
         stdout: bool,
 
         #[arg(short, long, group = "output", help = "Print to file")]
-        output: Option<String>,
+        out: Option<String>,
 
     },
 }

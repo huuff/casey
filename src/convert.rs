@@ -21,11 +21,11 @@ impl ConvertCaseTo for str {
 }
 
 pub trait BufferedConvert {
-    fn buffered_convert<'a>(&mut self, from_to_cases: &Vec<(Case, Case)>, output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>>;
+    fn buffered_convert(&mut self, from_to_cases: &Vec<(Case, Case)>, output: Box<&mut (dyn Write)>) -> Result<(), Box<dyn Error>>;
 }
 
 impl <T: BufRead> BufferedConvert for T {
-    fn buffered_convert<'a>(&mut self, from_to_cases: &Vec<(Case, Case)>, output: Box<&mut (dyn Write + 'a)>) -> Result<(), Box<dyn Error>> {
+    fn buffered_convert(&mut self, from_to_cases: &Vec<(Case, Case)>, output: Box<&mut (dyn Write)>) -> Result<(), Box<dyn Error>> {
         let mut lines = self.lines().peekable();
         while let Some(line) = lines.next() {
             let line = line?;

@@ -21,11 +21,11 @@ impl ConvertCaseTo for str {
 }
 
 pub trait BufferedConvert {
-    fn buffered_convert(&mut self, from_to_cases: &Vec<(Case, Case)>, output: Box<&mut (dyn Write)>) -> Result<(), Box<dyn Error>>;
+    fn buffered_convert(&mut self, from_to_cases: &Vec<(Case, Case)>, output: &mut Box<&mut dyn Write>) -> Result<(), Box<dyn Error>>;
 }
 
 impl <T: BufRead> BufferedConvert for T {
-    fn buffered_convert(&mut self, from_to_cases: &Vec<(Case, Case)>, output: Box<&mut (dyn Write)>) -> Result<(), Box<dyn Error>> {
+    fn buffered_convert(&mut self, from_to_cases: &Vec<(Case, Case)>, output: &mut Box<&mut dyn Write>) -> Result<(), Box<dyn Error>> {
         let mut lines = self.lines().peekable();
         while let Some(line) = lines.next() {
             let line = line?;
@@ -76,7 +76,7 @@ mod tests {
         let mut output = vec![];
 
         // ACT
-        input.buffered_convert(&vec![(Case::SnakeCase, Case::CamelCase)], Box::new(&mut output))?;
+        input.buffered_convert(&vec![(Case::SnakeCase, Case::CamelCase)], &mut Box::new(&mut output))?;
         let output = String::from_utf8(output)?;
 
 
@@ -96,7 +96,7 @@ mod tests {
         let mut output = vec![];
 
         // ACT
-        input.buffered_convert(&vec![(Case::PascalCase, Case::KebabCase)], Box::new(&mut output))?;
+        input.buffered_convert(&vec![(Case::PascalCase, Case::KebabCase)], &mut Box::new(&mut output))?;
         let output = String::from_utf8(output)?;
 
 

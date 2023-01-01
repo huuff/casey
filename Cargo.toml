@@ -10,6 +10,7 @@ description = "Detect and convert different case formats from the command line"
 [dependencies]
 approx = "0.5.1"
 clap = { version = "4.0.32", features = ["derive", "cargo"] }
+clap_complete = "4.0.7"
 heck = "0.4.0"
 indoc = "1.0.8"
 itertools = "0.10.5"

@@ -97,6 +97,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             input.buffered_convert(&conversions, output)?;
 
+        },
+        Command::Completions { shell } => {
+            clap_complete::generate(shell, &mut <Args as CommandFactory>::command() , "casey", &mut std::io::stdout());
         }
     };
 

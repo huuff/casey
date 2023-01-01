@@ -64,6 +64,11 @@ pub enum Command {
         output: Option<String>,
 
     },
+    #[command(about = "Generate completion scripts for a given shell")]
+    Completions {
+        #[arg(value_enum)]
+        shell: clap_complete::Shell,
+    }
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
